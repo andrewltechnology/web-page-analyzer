@@ -9,7 +9,7 @@ import pandas as pd
 #Load spaCy md model
 ai_word =spacy.load('en_core_web_md')
 
-#Initialize varaibles for script
+#Initialize variables for script
 location=''
 time=''
 url=''
