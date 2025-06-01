@@ -1,4 +1,4 @@
-# Automatic Feature Detection For Web Page Analytics Bounce Rate Evaluation (Python) 
+# Automatic AI Feature Detection For Web Page Analytics Bounce Rate Evaluation (Python) 
 
 This is a script that automatically detects features in any page visitor dataset using AI Natural language processing.
 
