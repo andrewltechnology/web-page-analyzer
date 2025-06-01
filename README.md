@@ -1,4 +1,4 @@
-# Automatic AI Feature Detection For Web Page Analytics Bounce Rate Evaluation (Python) 
+# Automatic AI Feature Detection for Web Page Analytics Bounce Rate Evaluation (Python) 
 
 This is a script that automatically detects features in any page visitor dataset using AI Natural language processing.
 
@@ -15,3 +15,5 @@ spaCy and Pandas
 2. Detect page features with AI
 3. Get average visitor time 
 4. Detect underperforming pages
+
+Developed by Andrew
