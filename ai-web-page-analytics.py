@@ -6,7 +6,7 @@
 import spacy
 import pandas as pd
 
-#Load spaCy English md modeed
+#Load the spaCy English md model
 ai_word =spacy.load('en_core_web_md')
 
 #Initialize variables for script for feature extraction and dataframes
