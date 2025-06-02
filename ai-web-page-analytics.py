@@ -1,15 +1,15 @@
 #Automatic Feature Detection For Web Page Analytics Bouce Rate Evaluation
 #This is a script that automatically detects features with AI NLP algorithm
-# and analyzes website visitor data to detect underperforming pages
+#and analyzes website visitor data to detect underperforming pages
 
 
 import spacy
 import pandas as pd
 
-#Load spaCy md model
+#Load spaCy English md modeed
 ai_word =spacy.load('en_core_web_md')
 
-#Initialize variables for script
+#Initialize variables for script for feature extraction and dataframes
 location=''
 time=''
 url=''
@@ -42,26 +42,27 @@ def csv_input(file):
 
 '''
 def extract(visits):
+#automatically detect features corresponding to visior locatio, page visited, and time spent on page
     for header in visits.columns:
         if 'region' in header or 'city' in header:
             location = header
         else:
             if region_token.similarity(header) >= .80 or  city_token.similarity(header) >= .80:
-                #Check spaCy for 80% similarity in header and add to location variable
+                #Use spaCy to find word that has atleast 80% word similarity to location variables
                 location=header
                 
         if 'page url' in header or 'visit url' in header:
             url = header
         else:
             if page_url_token.similarity(header) >= .80 or  visit_url.similarity(header) >= .80:
-                #Check spaCy for  80% similarity in header and add to url variable
+                #Use spaCy to find word that has atleast 80% word similarity to url variable
                 location=header
                 
         if 'time' in header:
             time=header
         else:
             if time.similarity(header) >= .80:  
-                #Check spaCy for  80% similarity in header and add to time variable 
+                #Use spaCy to find word that has atleast 80% word similarity to time on page variable
                 time=header
                 
     
