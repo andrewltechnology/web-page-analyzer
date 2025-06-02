@@ -42,7 +42,7 @@ def csv_input(file):
 
 '''
 def extract(visits):
-#automatically detect features corresponding to visior locatio, page visited, and time spent on page
+#automatically detect features corresponding to visior location, page visited, and time spent on page
     for header in visits.columns:
         if 'region' in header or 'city' in header:
             location = header
