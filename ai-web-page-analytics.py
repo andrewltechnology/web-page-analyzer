@@ -1,29 +1,32 @@
 #Automatic Feature Detection For Web Page Analytics Bouce Rate Evaluation
-#This is a script that automatically detects features with AI NLP algorithm
+#This is a script that automatically detects features with AI NLP
 #and analyzes website visitor data to detect underperforming pages
 
 
 import spacy
 import pandas as pd
+import pprint
+import sys
 
-#Load the spaCy English md model
+#Load spaCy md model
 ai_word =spacy.load('en_core_web_md')
 
-#Initialize variables for script for feature extraction and dataframes
-location=''
-time=''
-url=''
+
+
+#intitialize tokens 
 region_token=ai_word('region')
 city_token=ai_word('city')
 page_url_token=ai_word('page url')
 visit_url=ai_word('vist url') 
-time=ai_word('time')
-df =''
+time_token=ai_word('time')
 
 #Define a function to take in the csv file
 def csv_input(file):
     visits = pd.read_csv(file)
-    extract(visits)
+    return visits
+
+
+
 
 
 #Define a function to detect and extract features
@@ -41,59 +44,88 @@ def csv_input(file):
     threshold
 
 '''
+
 def extract(visits):
-#automatically detect features corresponding to visior location, page visited, and time spent on page
+
+    
+    time_header_found = 0
     for header in visits.columns:
-        if 'region' in header or 'city' in header:
-            location = header
+        # #organize each header into a list of tokens 
+        header_token=ai_word(header.lower())
+        if 'region' in header.lower() or 'city' in header.lower():
+            region=visits[header]
+           
         else:
-            if region_token.similarity(header) >= .80 or  city_token.similarity(header) >= .80:
-                #Use spaCy to find word that has atleast 80% word similarity to location variables
-                location=header
+            if region_token.similarity(header_token) >= .80 or  city_token.similarity(header_token) >= .80:
+                #Check spaCy for 80% similarity in header and add to location variable 
+                region=visits[header]
+         
+        if 'page url' in header.lower() or 'visit url' in header.lower() :
+            url=visits[header]
+            
+        else:
+            if page_url_token.similarity(header_token) >= .80 or  visit_url.similarity(header_token) >= .80:
+                #Check spaCy for  80% similarity in header and add to url variable
+                url=visits[header]
                 
-        if 'page url' in header or 'visit url' in header:
-            url = header
+        if 'time' in header.lower():
+            time=visits[header]
+            
+
         else:
-            if page_url_token.similarity(header) >= .80 or  visit_url.similarity(header) >= .80:
-                #Use spaCy to find word that has atleast 80% word similarity to url variable
-                location=header
+            split_words=header.split(" ")
+            for i in split_words:
+                iterable_token =ai_word(i.lower())[0]
+                #Check spaCy for  80% similarity in header and add to time variable 
+                if time_token.similarity(iterable_token) >= .80:
+                    time_header_found+=1
+            if time_header_found>1:
+                time=visits[header]
+
                 
-        if 'time' in header:
-            time=header
-        else:
-            if time.similarity(header) >= .80:  
-                #Use spaCy to find word that has atleast 80% word similarity to time on page variable
-                time=header
+                    
+    transformed = pd.concat([time, url,region], axis=1)
+    avg_time = time.mean()
+    return (avg_time, transformed)
+  
                 
     
-    #Place extracted features in new dataframe
-    df = pd.concat([location, time, url], axis=1)
-    average(df)
-    
-   
-#Define a function get the average time spent from the data frame
-def average(df):
-    average_time_spent = df[time].mean()
-    performance(average_time_spent)
 
 #Define a function to determine if each visited page is under performing 
-def performance(average_time_spent):
-    check['average_performance'] = average_time_spent
+def performance(ave,perform):
+
+    #get average of time on page
+    average_time_spent = ave
 
     #Define a dictionary to hold lists of under performing page urls
-    check = { 'under_performing': [],
-              'average_performance': '', 
-              'good_performance': [], 
-             }
+    check = { 'Under Performing': [],
+        'Average performance time': average_time_spent, 
+        'Good Performance': [], 
+        }
     
-    for index, row in df.iterrows():
-        if row['time'] < average_time_spent:
-            check['under_performing']=row['url']
+    
+
+
+    for index, row in perform.iterrows():
+        if row.iloc[0] < check['Average performance time']:
+            check['Under Performing'].append(row.iloc[1])
         else:
-            if row['time'] > average_time_spent:
-                    check['good_performance']=row['url']
+            if row.iloc[0] > check['Average performance time']:
+                    check['Good Performance'].append(row.iloc[1])
+    pprint.pprint(check)
+    
 
-    #Print the results
-    print("Under performing pages: " + check['under_performing'] + " \n Good performing pages: " + check['good_performance'])
 
 
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv)< 2:
+        print("Use this format: python file.py fullfile_path")
+        sys.exit(1)
+
+
+file_path= sys.argv[1]
+visits = csv_input(file_path)
+ave,perform = extract(visits)
+page_results=performance(ave,perform)
+print(performance(page_results))
