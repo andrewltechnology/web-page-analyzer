@@ -19,6 +19,6 @@ pprint
 3. Get average visitor time 
 4. Detect underperforming pages
 
-Run this in cmd or as a stand alone script
+Run this in cmd or as a standalone script
 
 Developed by Andrew
